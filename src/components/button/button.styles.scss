@@ -33,6 +33,23 @@
     }
   }
 
+  &.gold {
+    background-color: #c9a227;
+    color: #0d0d0d;
+    border: 1px solid #c9a227;
+
+    &:hover {
+      background-color: #0d0d0d;
+      color: #f5f1e8;
+      border-color: #0d0d0d;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
   &.inverted {
     background-color: white;
     color: black;

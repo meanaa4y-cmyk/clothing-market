@@ -1,15 +1,14 @@
-import React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from '../../store/root-reducer';
-import { legacy_createStore } from 'redux';
 import { HashRouter } from 'react-router-dom';
 
 export function renderWithProviders(
   ui,
   {
     preloadState = {},
-    store = legacy_createStore(rootReducer, preloadState),
+    store = configureStore({ reducer: rootReducer, preloadedState: preloadState }),
     ...renderOptions
   } = {}
 ) {

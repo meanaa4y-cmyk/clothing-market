@@ -5,7 +5,7 @@ import { addItemToCart, toggleMinicart } from '../../store/minicart.reducer';
 import Button from '../button/button.component';
 import './product-card.styles.scss';
 
-const ProductCard = memo(({ product }) => {
+const ProductCard = memo(function ProductCard({ product }) {
   const { name, imageUrl, price } = product;
   const dispatch = useDispatch();
 

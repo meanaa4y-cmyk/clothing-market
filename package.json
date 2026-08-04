@@ -1,6 +1,5 @@
 {
-  "name": "6-clothing-store",
-  "homepage": "/clothing-store/",
+  "name": "monarch-clothing-store",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { fetchCategories } from '../../store/category.reducer';
+import { fetchProducts } from '../../store/products.reducer';
 import CategoryListPage from '../category-list-page/category-list-page.component';
 import Category from '../category/category.component';
 
@@ -15,7 +15,7 @@ const Shop = () => {
     let isApiSubscribed = true;
 
     if (isApiSubscribed) {
-      dispatch(fetchCategories());
+      dispatch(fetchProducts());
     }
 
     return () => {

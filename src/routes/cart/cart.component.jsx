@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { addItemToCart, removeOrDecreaseItem } from '../../store/minicart.reducer';
 import { selectBagTotalPrice, selectCartItems } from '../../store/minicart.selector';
+import CheckoutForm from '../../components/checkout-form/checkout-form.component.jsx';
 
 import './cart.styles.scss';
 
@@ -79,6 +80,7 @@ const CartComponent = () => {
                 )
               })
             }
+            <CheckoutForm cartItems={cartItems} totalPrice={bagTotalPrice} />
           </>
         )
       }

@@ -1,104 +1,119 @@
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from 'firebase/auth';
+import { initializeApp, getApps } from "firebase/app";
 import {
   getFirestore,
-  doc,
-  getDoc,
-  setDoc,
   collection,
-  writeBatch,
+  doc,
+  addDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
   query,
-  getDocs
+  orderBy
 } from 'firebase/firestore';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDNe7LQgwwQRC0GY4XqZQOCSI0NcPJWpPI",
-  authDomain: "capstone-db-d45e0.firebaseapp.com",
-  projectId: "capstone-db-d45e0",
-  storageBucket: "capstone-db-d45e0.appspot.com",
-  messagingSenderId: "165932300125",
-  appId: "1:165932300125:web:f957cd53f455823e7e1ab4"
+import { firebaseConfig } from './firebase.config';
+
+let app;
+let db;
+let firebaseAvailable = false;
+
+try {
+  app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  firebaseAvailable = true;
+} catch (error) {
+  console.warn('Firebase could not be initialized. Running with local data only.', error?.message);
+}
+
+export const isFirebaseConfigured = () => firebaseAvailable;
+
+const requireFirebase = () => {
+  if (!firebaseAvailable) {
+    throw new Error('Firebase is not configured. Add your credentials to a .env file.');
+  }
 };
 
+// ---------------------------------------------------------------
+// PRODUCTS
+// ---------------------------------------------------------------
+export const getProducts = async () => {
+  requireFirebase();
+  const productsRef = collection(db, 'products');
+  const q = query(productsRef, orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
 
-const firebaseApp = initializeApp(firebaseConfig);
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({
-  prompt: "select_account"
-});
+  return snapshot.docs.map((docSnapshot) => ({
+    id: docSnapshot.id,
+    ...docSnapshot.data()
+  }));
+};
 
-// Google Auth
-export const auth = getAuth(firebaseApp);
-export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+export const addProduct = async (product) => {
+  requireFirebase();
+  const productsRef = collection(db, 'products');
+  const createdAt = new Date().toISOString();
+  const docRef = await addDoc(productsRef, { ...product, createdAt });
 
-// Firebase authenticate / create user from Google Login
-export const db = getFirestore();
+  return { id: docRef.id, ...product, createdAt };
+};
 
+export const updateProduct = async (productId, updates) => {
+  requireFirebase();
+  const productDocRef = doc(db, 'products', productId);
+  await updateDoc(productDocRef, updates);
+};
+
+export const deleteProduct = async (productId) => {
+  requireFirebase();
+  const productDocRef = doc(db, 'products', productId);
+  await deleteDoc(productDocRef);
+};
+
+// ---------------------------------------------------------------
+// ORDERS
+// ---------------------------------------------------------------
+export const getOrders = async () => {
+  requireFirebase();
+  const ordersRef = collection(db, 'orders');
+  const q = query(ordersRef, orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((docSnapshot) => ({
+    id: docSnapshot.id,
+    ...docSnapshot.data()
+  }));
+};
+
+export const addOrder = async (order) => {
+  requireFirebase();
+  const ordersRef = collection(db, 'orders');
+  const createdAt = new Date().toISOString();
+  const docRef = await addDoc(ordersRef, { ...order, status: 'pending', createdAt });
+
+  return { id: docRef.id, ...order, status: 'pending', createdAt };
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+  requireFirebase();
+  const orderDocRef = doc(db, 'orders', orderId);
+  await updateDoc(orderDocRef, { status });
+};
+
+export const deleteOrder = async (orderId) => {
+  requireFirebase();
+  const orderDocRef = doc(db, 'orders', orderId);
+  await deleteDoc(orderDocRef);
+};
+
+// ---------------------------------------------------------------
+// CATEGORIES (used to seed collections from the old demo data)
+// ---------------------------------------------------------------
 export const addCollectionAndDocs = async (collectionKey, objectsToAdd) => {
-  const collectionRef = await collection(db, collectionKey);
-  const batch = await writeBatch(db);
-
-  objectsToAdd.forEach((category) => {
+  requireFirebase();
+  const collectionRef = collection(db, collectionKey);
+  objectsToAdd.forEach(async (category) => {
     const docRef = doc(collectionRef, category.title.toLowerCase());
-    batch.set(docRef, category);
+    await setDoc(docRef, category);
   });
-
-  await batch.commit();
-}
-
-export const getCategories = async () => {
-  const collectionRef = collection(db, 'categories');
-  const q = query(collectionRef);
-  const querySnapshot = await getDocs(q);
-
-  return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
-}
-
-export const createUserDocFromAuth = async (userAuth, extraInfo = {}) => {
-  if (!userAuth) return;
-
-  const userDocRef = doc(db, 'users', userAuth.uid);
-  const userSnapshot = await getDoc(userDocRef);
-
-  if (!userSnapshot.exists()) {
-    const { displayName, email } = userAuth;
-    const createdAt = new Date();
-
-    try {
-      await setDoc(userDocRef, {
-        displayName,
-        email,
-        createdAt,
-        ...extraInfo
-      })
-    } catch (error) {
-      console.log(`Error creating user: ${error.message}`);
-    }
-  }
-
-  return userDocRef;
 };
-
-export const createUserWithEmailPwd = async (email, password) => {
-  if (email && password) {
-    return await createUserWithEmailAndPassword(auth, email, password);
-  }
-};
-
-export const loginUserWithEmailPwd = async (email, password) => {
-  if (email && password) {
-    return await signInWithEmailAndPassword(auth, email, password);
-  }
-};
-
-export const logOutUser = async () => await signOut(auth);
-
-export const authChangedListener = (callback) => onAuthStateChanged(auth, callback)

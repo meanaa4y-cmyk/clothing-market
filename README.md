@@ -1,79 +1,77 @@
-# Clothing Store v1 | A React E-commerce custom project
+# MONARCH Clothing Store
 
-React basic e-commerce store, build as part of the course **"Complete React Developer"** from _"Zero To Master"_. (PS: read the *About the Course* section down below)
+A branded e-commerce React app with a storefront and a full admin panel. Built with **React 18**, **Vite 5**, **Redux Toolkit**, **React Router 6**, **Sass** and **Firebase (Firestore)**.
 
-My React experience has been on and off as my career led to be a Senior Frontend Developer on other platforms (Salesforce SFCC) that don't use React, so I decided to get an extensive course to challenge improve and expand my experience with it.
+> Previously the "Clothing Store v1" demo project (Zero to Mastery course). Rebuilt and rebranded with an admin panel, product management, checkout and live order tracking.
 
-» Open the *current version here: https://fleps.github.io/clothing-store/
+## Features
 
-*Published version is always based on the code from the [release branch](https://github.com/fleps/clothing-store/tree/releases).
+### Storefront
+- Branded landing page with hero banner and category grid
+- Shop All page grouping products by category
+- Category pages with product cards (lazy-loaded images, hover "Add to cart")
+- Cart / minicart with quantity controls and running totals
+- **Checkout form** — when a customer places an order it is saved to Firestore and appears instantly in the Admin panel
 
-## 1. Project Technical Details
+### Admin panel (`/admin`)
+- Simple password gate (default password: `admin123`, override with `VITE_ADMIN_PASSWORD`)
+- **Dashboard** — total products, total orders, pending orders and revenue stats, plus recent orders
+- **Products** — add, edit and delete products (name, category, price, image URL, description)
+- **Orders** — view customer + address details, change order status (pending / shipped / delivered / cancelled) and delete orders
 
-- Node v18.16
-- Project Boilerplate created using [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) v4.2 (Vite 5.1) (the course uses CRA)
-- React + react-dom v18.2
-- React-router v6.22
-- Sass v1.72
-- Firebase v10.9
+### Robustness (no more white screen)
+- Firebase is initialized defensively (wrapped in try/catch) — if it is not configured the shop falls back to built-in seed data, so the site always renders
+- Global React Error Boundary with a friendly fallback instead of a blank page
+- Product & order data is blacklisted from Redux-persist so it always comes fresh from Firestore
 
-## 2. Features (as part of the course)
-- Login / Registration using Firebase auth with Google and Email/Password options
-- Initially using `useContext` for Authentication, Products list and Minicart show/hide/render.
-  - Refactor #1: Context changes, converting `useStates` inside the Context to `useReducer`
-  - Refactor #2: Contexts gets replaced by using Redux. `reselect` added to the project to memoize the category array and avoid recreating it without need and unnecessary re-renders. **Redux-thunk** and **Redux-Saga** examples.
-  - Refactor #3: Manual Redux reworked to use **Redux-Toolkit**
-- Shop / Category pages with functional Add To Cart button + Minicart + Bag icon counter
-- Cart/Minicart quantity changes + product removal + counter update
-- Categories data comes from Firebase.
-- Code performance improvements:
-  - added `useCallback` to avoid redefining functions;
-  - added `memo` to some components to avoid unnecessary re-renders;
-  - added react `lazy` and `Suspense` to App for better bundle/code splitting;
-- Added Unit Test for basic testing + Redux Reducer and Selectors.
+## Getting started
 
-## 3. Extra features and customizations added by me (not part of the course)
-- Products have currency and proper price format.
-- Minicart open / close improvements:
-  - Minicart auto opens when adding a product to the bag (if the user is not on Cart page). Very basic for e-commerce.
-  - Minicart closes when changing "pages".
-  - Minicart has CSS animation to open/close, doesn't just appear/disappear.
-  - Logic improved: reworked calls to avoid unnecessary re-renders when opening / closing.
+```bash
+# Install dependencies
+npm install
 
-- Unnecessary `useState` + `useEffects` removed following React docs.
-- Added cleanup function on `useEffect` that fetches the category data from Firebase (course never mentions this)
-- Semantic / accessible HTML (course code has divs nested into spans, divs/spans having click events...)
-- Optimized arrays methods, course teaches bad practices doing 2 (or even more) transverse on the same arrays for no reason.
-- Github Actions Workflow implemented to auto-publish when a new version gets pushed to /releases branch
-- Added **Redux-Persist** for minicart with **Redux-Toolkit**.
-- Added Loading element on categories async fetch using **Redux-Toolkit** `createAsyncThunk` approach.
-- Added scroll position reset when navigating to checkout
-- Unit Test added with **Vitest** + **Testing-Library** + as I built the project using Vite and not CRA.
-- Site UI / CSS / Styles customized
-  - Navigation fixed position
-  - Minicart shadow, fixed position
-  - Round corners and shadows added on many elements
-  - Implemented proper mobile/responsive behavior/styles
-  - Checkout total element has fixed positions for better UX if having scroll (different between mobile/desktop)
-  - Product card image effect, shadows, corners and button appearing css animation added
-  - Added site footer with bottom position.
-  - Image lazy loading
-  - Loading properly added on category pages
-  - Scroll position reset to top on "page" change
-  - Smooth CSS animation on "page" change
+# Start the dev server
+npm run dev
+```
 
-## About the Course
-Now that I finished the course, I'm not sure I recommend it. I can't judge the React part itself too much, and the course still has its values to introduce many different topics needed for someone wanting to learn React, but I expected way more from it.
+The dev server runs at http://localhost:5173/.
 
-On the pure Front-End side of things (proper UX for e-commerce sites, good practices for HTML/JS/CSS, responsive layout) the course **lacks tremendously** and **actually teaches bad practices** (double array transverse, nesting divs inside spans, attaching onClick events do spans/divs...).
+## Connecting your own Firebase
 
-Also, the teaching method can be frustrating as it's based on refactoring over and over the same features (without explaining that this was going to happen). This resulted in features being developed with incomplete solutions on a specific approach, and then in a few lessons it was completely refactored to show another way, but always with some flaw. At the end, it becomes overwhelming and it's not clear what is the best way to do XYZ feature.
+1. Create a Firebase project at https://console.firebase.google.com
+2. Add a **Web App** and copy its credentials
+3. Copy `.env.example` to `.env` and fill in your credentials:
 
-## v1 Completed
-The project is now completed, I've added quite a few customizations (read section 3), specially on the UI side, which I'm satisfied with.
+```bash
+cp .env.example .env
+```
 
-Maybe in I'll add more functionalities on a new version in the future, who knows.
+4. In Firestore create two collections:
+   - `products` → document fields: `name`, `category`, `price`, `imageUrl`, `description`, `createdAt`
+   - `orders` → document fields: `customer` (object with `name`, `email`, `phone`, `address`), `items` (array of `{name, price, quantity, imageUrl}`), `total`, `status`, `createdAt`
 
+5. Allow read/write access for your web app (for development you can use the Firestore test rules) and reload the site.
 
+When Firebase is connected:
+- Products added in Admin appear in the shop
+- Orders placed in the shop checkout appear in Admin in real time
 
+## Scripts
 
+| Script | Description |
+| ------ | ----------- |
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run the Vitest suite |
+
+## Tech stack
+
+- Node v18+
+- Vite 5 + @vitejs/plugin-react
+- React + react-dom 18
+- React Router v6
+- Redux Toolkit + redux-persist + reselect
+- Sass
+- Firebase 10 (Firestore)

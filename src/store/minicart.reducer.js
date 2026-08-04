@@ -65,11 +65,16 @@ export const minicartSlice = createSlice({
     },
     toggleMinicart(state, action) {
       state.openMinicart = action.payload;
+    },
+    clearCart(state) {
+      state.cartItems = [];
+      state.bagCount = 0;
+      state.bagTotalPrice = 0;
     }
   }
 });
 
-export const { addItemToCart, removeOrDecreaseItem, toggleMinicart } = minicartSlice.actions;
+export const { addItemToCart, removeOrDecreaseItem, toggleMinicart, clearCart } = minicartSlice.actions;
 export const minicartReducer = minicartSlice.reducer;
 
 /* Old manual Redux implementation

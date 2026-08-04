@@ -57,7 +57,7 @@
 
   .category-body-container {
     padding: 10px 15px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.55);
     position: absolute;
     bottom: 0;
     right: 0;
@@ -71,6 +71,16 @@
       font-size: 25px;
       color: #ffffff;
       text-transform: uppercase;
+      letter-spacing: 2px;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 34px;
+        height: 3px;
+        background: #c9a227;
+        margin-top: 6px;
+      }
     }
   }
 }

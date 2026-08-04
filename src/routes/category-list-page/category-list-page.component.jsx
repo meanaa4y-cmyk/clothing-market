@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { selectCategoriesMap, selectCategoriesIsLoading } from '../../store/category.selector';
+import { selectCategoriesMap, selectProductsIsLoading } from '../../store/products.selector';
 import ProductCard from '../../components/product-card/product-card.component';
 import SpinnerComponent from '../../components/spinner/spinner.component';
 
 
 const CategoryListPage = () => {
   const categoriesMap = useSelector(selectCategoriesMap);
-  const isLoading = useSelector(selectCategoriesIsLoading);
+  const isLoading = useSelector(selectProductsIsLoading);
 
   return (
     <>
@@ -17,6 +17,9 @@ const CategoryListPage = () => {
           <SpinnerComponent />
         ) : (
           <div className='container page-container'>
+            <div className='page-heading'>
+              <h1>Shop All</h1>
+            </div>
             { Object.keys(categoriesMap).map(title => {
               return (
                 <div className='cat-wrapper' key={title}>
