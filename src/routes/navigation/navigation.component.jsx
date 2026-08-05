@@ -12,11 +12,10 @@ const Navigation = () => {
       <div className='navigation'>
         <div className='navigation-content'>
           <Link className='logo-container' to={'/'}>
-            <img src={Logo} alt='Monarch' className='logo-image' />
-            <span className='logo-text'>MONARCH</span>
+            <img src={Logo} alt='Curve' className='logo-image' />
+            <span className='logo-text'>Curve</span>
           </Link>
           <div className='nav-links-container'>
-            <Link className='nav-link' to={'/shop'}>Shop All</Link>
             <Link className='nav-link' to={'/admin'}>Admin</Link>
             <CartIcon />
           </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import { fetchProducts } from '../../store/products.reducer';
 import { fetchOrders } from '../../store/orders.reducer';
@@ -11,10 +12,11 @@ import AdminOrders from '../../components/admin/admin-orders.component.jsx';
 import './admin.styles.scss';
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
-const AUTH_KEY = 'monarch-admin-auth';
+const AUTH_KEY = 'curve-admin-auth';
 
 const Admin = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isAuthed, setIsAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === 'true');
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -57,10 +59,11 @@ const Admin = () => {
   return (
     <div className='container admin-page'>
       <div className='admin-header'>
-        <h1>MONARCH Admin</h1>
+        <h1>Curve Admin</h1>
         <button type='button' className='admin-logout' onClick={() => {
           sessionStorage.removeItem(AUTH_KEY);
           setIsAuthed(false);
+          navigate('/');
         }}>Log out</button>
       </div>
       <div className='admin-tabs'>
