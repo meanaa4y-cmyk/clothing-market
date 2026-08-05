@@ -17,7 +17,6 @@ const defaultFormFields = {
 const CheckoutForm = ({ cartItems, totalPrice }) => {
   const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
 
   const handleChange = (event) => {
@@ -25,9 +24,8 @@ const CheckoutForm = ({ cartItems, totalPrice }) => {
     setFormFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = useCallback(async (event) => {
+  const handleSubmit = useCallback((event) => {
     event.preventDefault();
-    setIsSubmitting(true);
 
     const order = {
       customer: { ...formFields },
@@ -40,16 +38,15 @@ const CheckoutForm = ({ cartItems, totalPrice }) => {
       total: totalPrice
     };
 
-    try {
-      await dispatch(placeOrderThunk(order)).unwrap();
-      dispatch(clearCart());
-      setFormFields(defaultFormFields);
-      setOrderPlaced(true);
-    } catch (error) {
+    // Show success immediately — order is placed in the background.
+    // It'll show up in the Admin panel once it finishes saving.
+    dispatch(clearCart());
+    setFormFields(defaultFormFields);
+    setOrderPlaced(true);
+
+    dispatch(placeOrderThunk(order)).catch((error) => {
       console.error('Failed to place order:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }, [formFields, cartItems, totalPrice, dispatch]);
 
   if (orderPlaced) {
@@ -103,9 +100,8 @@ const CheckoutForm = ({ cartItems, totalPrice }) => {
         </div>
         <Button
           type='submit'
-          label={isSubmitting ? 'Placing order…' : 'Place Order'}
+          label='Place Order'
           style='gold'
-          disabled={isSubmitting}
         />
       </form>
     </div>
