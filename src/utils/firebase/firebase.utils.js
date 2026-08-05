@@ -34,6 +34,17 @@ const requireFirebase = () => {
   }
 };
 
+// Wraps a Firebase call so it never hangs forever (e.g. blocked network,
+// misconfigured project, slow connection). Rejects after `ms` so calling
+// code can fall back to local behaviour instead of spinning forever.
+const withTimeout = (promise, ms = 8000) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Firebase request timed out')), ms)
+    )
+  ]);
+
 // ---------------------------------------------------------------
 // PRODUCTS
 // ---------------------------------------------------------------
@@ -41,7 +52,7 @@ export const getProducts = async () => {
   requireFirebase();
   const productsRef = collection(db, 'products');
   const q = query(productsRef, orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
+  const snapshot = await withTimeout(getDocs(q));
 
   return snapshot.docs.map((docSnapshot) => ({
     id: docSnapshot.id,
@@ -53,7 +64,7 @@ export const addProduct = async (product) => {
   requireFirebase();
   const productsRef = collection(db, 'products');
   const createdAt = new Date().toISOString();
-  const docRef = await addDoc(productsRef, { ...product, createdAt });
+  const docRef = await withTimeout(addDoc(productsRef, { ...product, createdAt }));
 
   return { id: docRef.id, ...product, createdAt };
 };
@@ -61,13 +72,13 @@ export const addProduct = async (product) => {
 export const updateProduct = async (productId, updates) => {
   requireFirebase();
   const productDocRef = doc(db, 'products', productId);
-  await updateDoc(productDocRef, updates);
+  await withTimeout(updateDoc(productDocRef, updates));
 };
 
 export const deleteProduct = async (productId) => {
   requireFirebase();
   const productDocRef = doc(db, 'products', productId);
-  await deleteDoc(productDocRef);
+  await withTimeout(deleteDoc(productDocRef));
 };
 
 // ---------------------------------------------------------------
@@ -77,7 +88,7 @@ export const getOrders = async () => {
   requireFirebase();
   const ordersRef = collection(db, 'orders');
   const q = query(ordersRef, orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
+  const snapshot = await withTimeout(getDocs(q));
 
   return snapshot.docs.map((docSnapshot) => ({
     id: docSnapshot.id,
@@ -89,7 +100,7 @@ export const addOrder = async (order) => {
   requireFirebase();
   const ordersRef = collection(db, 'orders');
   const createdAt = new Date().toISOString();
-  const docRef = await addDoc(ordersRef, { ...order, status: 'pending', createdAt });
+  const docRef = await withTimeout(addDoc(ordersRef, { ...order, status: 'pending', createdAt }));
 
   return { id: docRef.id, ...order, status: 'pending', createdAt };
 };
@@ -97,13 +108,13 @@ export const addOrder = async (order) => {
 export const updateOrderStatus = async (orderId, status) => {
   requireFirebase();
   const orderDocRef = doc(db, 'orders', orderId);
-  await updateDoc(orderDocRef, { status });
+  await withTimeout(updateDoc(orderDocRef, { status }));
 };
 
 export const deleteOrder = async (orderId) => {
   requireFirebase();
   const orderDocRef = doc(db, 'orders', orderId);
-  await deleteDoc(orderDocRef);
+  await withTimeout(deleteDoc(orderDocRef));
 };
 
 // ---------------------------------------------------------------

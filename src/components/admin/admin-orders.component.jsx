@@ -11,14 +11,21 @@ const AdminOrders = () => {
   const dispatch = useDispatch();
   const orders = useSelector(selectOrders);
   const [expanded, setExpanded] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const handleStatusChange = (orderId, status) => {
     dispatch(updateOrderStatusThunk({ orderId, status }));
   };
 
-  const handleDelete = (order) => {
+  const handleDelete = async (order) => {
     if (window.confirm(`Delete order #${order.id.slice(0, 8)}?`)) {
-      dispatch(deleteOrderThunk(order.id));
+      await dispatch(deleteOrderThunk(order.id));
+      showToast('Order deleted');
     }
   };
 
@@ -29,6 +36,7 @@ const AdminOrders = () => {
 
   return (
     <div className='admin-orders'>
+      {toast && <div className='admin-toast'>{toast}</div>}
       <div className='admin-section-head'>
         <h2>Orders ({orders.length})</h2>
       </div>

@@ -5,13 +5,13 @@ const categories = [
   {
     "id": 1,
     "title": "Women",
-    "imageUrl": "https://i.ibb.co/GCCdy8t/womens.png",
+    "imageUrl": "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=800&auto=format&fit=crop&q=80",
     "route": "shop/womens"
   },
   {
     "id": 2,
     "title": "Men",
-    "imageUrl": "https://i.ibb.co/R70vBrQ/men.png",
+    "imageUrl": "https://images.unsplash.com/photo-1737748612418-e39bcd6503a2?w=800&auto=format&fit=crop&q=80",
     "route": "shop/mens"
   },
   {

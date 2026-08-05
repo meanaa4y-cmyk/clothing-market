@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import CategoryList from '../../components/category-list/category-list.component';
 import './home.styles.scss';
 
@@ -12,7 +11,6 @@ const Home = () => {
           <p className='hero-subtitle'>
             Premium streetwear crafted for those who rule the room.
           </p>
-          <Link className='hero-cta' to='/shop'>Shop the collection</Link>
         </div>
       </section>
       <CategoryList />
