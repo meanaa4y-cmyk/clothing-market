@@ -6,7 +6,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth, isAdminEmail } from "../firebase";
+import { auth } from "../firebase";
 
 const AuthContext = createContext(null);
 
@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     loading,
-    isAdmin: isAdminEmail(user?.email),
+    isAdmin: !!user,
     signup,
     login,
     logout,

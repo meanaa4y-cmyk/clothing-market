@@ -17,13 +17,3 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-// Emails allowed to access /admin. Configure via VITE_ADMIN_EMAILS
-// as a comma-separated list, e.g. "admin@linenhouse.com,you@example.com"
-export const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
-
-export const isAdminEmail = (email) =>
-  !!email && ADMIN_EMAILS.includes(email.toLowerCase());

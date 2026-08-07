@@ -127,6 +127,8 @@ export default function StorePage() {
       <CheckoutModal
         open={checkoutOpen}
         subtotal={subtotal}
+        cart={cart}
+        products={products}
         onClose={() => setCheckoutOpen(false)}
         onOrderComplete={handleOrderComplete}
       />

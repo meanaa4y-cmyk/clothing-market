@@ -25,26 +25,26 @@ export const imgUrl = (path) =>
 
 export const CATALOG_PLAN = [
   {
-    cat: "unstitched", label: "Unstitched", count: 14,
+    cat: "unstitched", label: "Unstitched", count: 5,
     styles: ["2 Piece Embroidered Suit", "3 Piece Digital Printed Suit", "2 Piece Printed Suit", "3 Piece Lawn Suit", "2 Piece Karandi Suit", "3 Piece Embroidered Lawn"],
     tones: ["Vetiver", "Marbled Clay", "Faded Rose", "Dusty Sage", "Ivory Bloom", "Slate Mist", "Ochre Trail", "Blush Fern", "Charcoal Weave", "Amber Reed"],
     priceRange: [3290, 9990],
   },
   {
-    cat: "ready", label: "Ready to Wear", count: 11,
+    cat: "ready", label: "Ready to Wear", count: 5,
     styles: ["Solid Tunic", "2 Piece Embroidered Suit", "Printed Dress", "A-Line Kurta", "Straight Shirt", "Panel Kurta"],
     tones: ["Sandstone", "Olive Hush", "Terracotta Bloom", "Rose Ash", "Powder Blue", "Wheat Field", "Clove", "Sage Linen", "Storm Grey"],
     priceRange: [2990, 7490],
   },
   {
-    cat: "luxury", label: "Luxury Pret", count: 10,
+    cat: "luxury", label: "Luxury Pret", count: 5,
     styles: ["3 Piece Embroidered Suit", "2 Piece Embroidered Suit", "Hand-Embellished Kurta Set", "Formal Chiffon Suit", "Sequinned Pret Set"],
     tones: ["Ivory Filigree", "Midnight Vine", "Emerald Trellis", "Gilded Rose", "Onyx Bloom", "Opaline Mist", "Rouge Lattice"],
     priceRange: [9990, 24990],
   },
   {
-    cat: "men", label: "Men", count: 9,
-    styles: ["2 Piece Suit", "Kurta Shalwar", "Waistcoat Set", "Solid Kurta", "Formal Shirt Kameez", "Yellow Festive Kurta", "Thobe Set", "Casual Sunglasses Kurta", "Rajasthani Vest Kurta"],
+    cat: "men", label: "Men", count: 5,
+    styles: ["2 Piece Suit", "Kurta Shalwar", "Formal Waistcoat Suit", "Solid Kurta", "Formal Shirt Kameez", "Yellow Festive Kurta", "Thobe Set", "Casual Sunglasses Kurta"],
     styleImages: [
       "8621669/pexels-photo-8621669",
       "35542192/pexels-photo-35542192",
@@ -54,14 +54,13 @@ export const CATALOG_PLAN = [
       "34423748/pexels-photo-34423748",
       "8565796/pexels-photo-8565796",
       "26599787/pexels-photo-26599787",
-      "13222257/pexels-photo-13222257",
     ],
     tones: ["Slate Weave", "Wheat Field", "Espresso", "Olive Bark", "Charcoal Grid", "Sandalwood", "Ash Grey"],
     priceRange: [3990, 12990],
   },
   {
-    cat: "wraps", label: "Wraps", count: 10,
-    styles: ["Embroidered Dupatta", "Printed Chiffon Wrap", "Woven Shawl", "Digital Printed Stole", "Net Dupatta", "Silk Stole", "Embellished Stole", "Printed Silk Wrap", "Chiffon Dupatta", "Woven Cotton Stole"],
+    cat: "wraps", label: "Wraps", count: 5,
+    styles: ["Embroidered Dupatta", "Printed Chiffon Wrap", "Woven Shawl", "Digital Printed Stole", "Net Dupatta", "Silk Stole", "Embellished Stole", "Printed Silk Wrap"],
     styleImages: [
       "local:/images/wrap-embroidered-gold-trellis.jpg",
       "local:/images/wrap-printed-chiffon-ivory.jpg",
@@ -71,14 +70,12 @@ export const CATALOG_PLAN = [
       "local:/images/wrap-silk-stole-blush.jpg",
       "local:/images/wrap-embellished-ochre.jpg",
       "local:/images/wrap-printed-silk-slate.jpg",
-      "local:/images/wrap-embroidered-gold-trellis.jpg",
-      "local:/images/wrap-printed-chiffon-ivory.jpg",
     ],
     tones: ["Gold Trellis", "Ivory Bloom", "Dusty Rose", "Sage Weave", "Midnight Vine", "Blush Fern", "Ochre Trail", "Slate Mist", "Amber Reed", "Powder Blue"],
     priceRange: [1990, 6990],
   },
   {
-    cat: "footwear", label: "Footwear", count: 9,
+    cat: "footwear", label: "Footwear", count: 5,
     styles: ["Beige Block Heels", "Strappy Sandals", "Glitter Closed-Toe Heels", "Flat-Soled Shoe", "Strappy Walking Heels", "Embellished Pair Heels", "White Peep-Toe Sandals", "Boutique Black Sandals", "Blue Studded Heels"],
     styleImages: [
       "local:/images/shoe-block-heels-beige.jpg",
@@ -95,7 +92,7 @@ export const CATALOG_PLAN = [
     priceRange: [2490, 8990],
   },
   {
-    cat: "bags", label: "Bags", count: 11,
+    cat: "bags", label: "Bags", count: 5,
     styles: ["Canvas Tote Bag", "Leather Shoulder Bag", "Structured Handbag", "Colourblock Handbag", "Everyday Tote", "Quilted Tote Bag", "Minimalist Tote", "Studio Tote Bag", "Turquoise Leather Handbag", "Bamboo-Handle Leather Bag", "Chic Crossbody Bag"],
     styleImages: [
       "local:/images/bag-canvas-tote-natural.jpg",

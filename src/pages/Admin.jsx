@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useProducts } from "../data/productsStore";
+import { useOrders } from "../data/ordersStore";
 import { CATEGORY_OPTIONS, fmt } from "../data/catalog";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
@@ -16,17 +17,21 @@ const CAT_LABELS = {
   men: "Men", wraps: "Wraps", footwear: "Footwear", bags: "Bags",
 };
 
+const ORDER_STATUSES = ["New", "Processing", "Shipped", "Delivered", "Cancelled"];
+
 export default function Admin() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { products, loading, usingFallback, addProduct, updateProduct, deleteProduct, seedFromDemoCatalog } = useProducts();
+  const { products, loading, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { orders, loading: ordersLoading, updateOrderStatus, deleteOrder } = useOrders();
+
+  const [tab, setTab] = useState("products");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [seeding, setSeeding] = useState(false);
 
   const openAdd = () => {
     setEditingId(null);
@@ -99,15 +104,20 @@ export default function Admin() {
     }
   };
 
-  const onSeed = async () => {
-    if (!confirm("Seed Firestore with the demo catalog? This adds the generated products as real, editable documents.")) return;
-    setSeeding(true);
+  const onOrderStatusChange = async (order, status) => {
     try {
-      await seedFromDemoCatalog();
+      await updateOrderStatus(order.id, status);
     } catch (err) {
-      alert("Seeding failed: " + (err?.message || err));
-    } finally {
-      setSeeding(false);
+      alert("Couldn't update order: " + (err?.message || err));
+    }
+  };
+
+  const onOrderDelete = async (order) => {
+    if (!confirm(`Delete order ${order.orderNum}? This can't be undone.`)) return;
+    try {
+      await deleteOrder(order.id);
+    } catch (err) {
+      alert("Delete failed: " + (err?.message || err));
     }
   };
 
@@ -128,64 +138,148 @@ export default function Admin() {
       </div>
 
       <div className="admin-body">
-        <div className="admin-head">
-          <div>
-            <h1>Products</h1>
-            <div className="admin-stats">
-              {loading ? "Loading…" : `${products.length} product${products.length === 1 ? "" : "s"}`}
-              {usingFallback && !loading && " · showing the demo catalog (not yet saved to Firestore)"}
-            </div>
-          </div>
-          <div className="admin-actions">
-            {usingFallback && (
-              <button className="btn btn-dark" onClick={onSeed} disabled={seeding}>
-                {seeding ? "Seeding…" : "Seed Demo Catalog"}
-              </button>
-            )}
-            <button className="btn btn-clay" onClick={openAdd}>+ Add Product</button>
-          </div>
+        <div className="admin-tabs" style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+          <button
+            className={tab === "products" ? "btn btn-dark" : "btn"}
+            onClick={() => setTab("products")}
+          >
+            Products
+          </button>
+          <button
+            className={tab === "orders" ? "btn btn-dark" : "btn"}
+            onClick={() => setTab("orders")}
+          >
+            Orders{orders.length ? ` (${orders.length})` : ""}
+          </button>
         </div>
 
-        <div className="admin-table-wrap">
-          {loading ? (
-            <div className="admin-empty">Loading products…</div>
-          ) : products.length === 0 ? (
-            <div className="admin-empty">No products yet. Add one to get started.</div>
-          ) : (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Flags</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((p) => (
-                  <tr key={p.id}>
-                    <td><img src={p.img} alt={p.name} /></td>
-                    <td>{p.name}</td>
-                    <td>{p.label || CAT_LABELS[p.cat]}</td>
-                    <td>
-                      {p.oldPrice ? <span style={{ textDecoration: "line-through", opacity: 0.5, marginRight: 6 }}>{fmt(p.oldPrice)}</span> : null}
-                      {fmt(p.price)}
-                    </td>
-                    <td>{[p.isNew && "New", p.oldPrice && "Sale"].filter(Boolean).join(", ") || "—"}</td>
-                    <td>
-                      <div className="admin-row-actions">
-                        <button onClick={() => openEdit(p)} disabled={usingFallback}>Edit</button>
-                        <button className="danger" onClick={() => onDelete(p)} disabled={usingFallback}>Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        {tab === "products" && (
+          <>
+            <div className="admin-head">
+              <div>
+                <h1>Products</h1>
+                <div className="admin-stats">
+                  {loading ? "Loading…" : `${products.length} product${products.length === 1 ? "" : "s"}`}
+                </div>
+              </div>
+              <div className="admin-actions">
+                <button className="btn btn-clay" onClick={openAdd}>+ Add Product</button>
+              </div>
+            </div>
+
+            <div className="admin-table-wrap">
+              {loading ? (
+                <div className="admin-empty">Loading products…</div>
+              ) : products.length === 0 ? (
+                <div className="admin-empty">No products yet. Add one to get started.</div>
+              ) : (
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Flags</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((p) => (
+                      <tr key={p.id}>
+                        <td><img src={p.img} alt={p.name} /></td>
+                        <td>{p.name}</td>
+                        <td>{p.label || CAT_LABELS[p.cat]}</td>
+                        <td>
+                          {p.oldPrice ? <span style={{ textDecoration: "line-through", opacity: 0.5, marginRight: 6 }}>{fmt(p.oldPrice)}</span> : null}
+                          {fmt(p.price)}
+                        </td>
+                        <td>{[p.isNew && "New", p.oldPrice && "Sale"].filter(Boolean).join(", ") || "—"}</td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <button onClick={() => openEdit(p)}>Edit</button>
+                            <button className="danger" onClick={() => onDelete(p)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
+        )}
+
+        {tab === "orders" && (
+          <>
+            <div className="admin-head">
+              <div>
+                <h1>Orders</h1>
+                <div className="admin-stats">
+                  {ordersLoading ? "Loading…" : `${orders.length} order${orders.length === 1 ? "" : "s"}`}
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-table-wrap">
+              {ordersLoading ? (
+                <div className="admin-empty">Loading orders…</div>
+              ) : orders.length === 0 ? (
+                <div className="admin-empty">No orders placed yet.</div>
+              ) : (
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Order #</th>
+                      <th>Customer</th>
+                      <th>Address</th>
+                      <th>Items</th>
+                      <th>Total</th>
+                      <th>Payment</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((o) => (
+                      <tr key={o.id}>
+                        <td>{o.orderNum}</td>
+                        <td>{o.customer?.name}</td>
+                        <td>
+                          {o.customer?.address}
+                          {o.customer?.city ? `, ${o.customer.city}` : ""}
+                          {o.customer?.postalCode ? ` ${o.customer.postalCode}` : ""}
+                        </td>
+                        <td>
+                          {(o.items || []).map((it, i) => (
+                            <div key={i}>{it.name} × {it.qty}</div>
+                          ))}
+                        </td>
+                        <td>{fmt(o.subtotal || 0)}</td>
+                        <td>{o.payment}</td>
+                        <td>
+                          <select
+                            value={o.status || "New"}
+                            onChange={(e) => onOrderStatusChange(o, e.target.value)}
+                          >
+                            {ORDER_STATUSES.map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <button className="danger" onClick={() => onOrderDelete(o)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {modalOpen && (
