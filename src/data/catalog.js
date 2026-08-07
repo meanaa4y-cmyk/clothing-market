@@ -59,8 +59,8 @@ export const CATALOG_PLAN = [
     priceRange: [3990, 12990],
   },
   {
-    cat: "wraps", label: "Wraps", count: 5,
-    styles: ["Embroidered Dupatta", "Printed Chiffon Wrap", "Woven Shawl", "Digital Printed Stole", "Net Dupatta", "Silk Stole", "Embellished Stole", "Printed Silk Wrap"],
+    cat: "wraps", label: "Wraps", count: 10,
+    styles: ["Embroidered Dupatta", "Printed Chiffon Wrap", "Woven Shawl", "Digital Printed Stole", "Net Dupatta", "Silk Stole", "Embellished Stole", "Printed Silk Wrap", "Chiffon Dupatta", "Woven Cotton Stole"],
     styleImages: [
       "local:/images/wrap-embroidered-gold-trellis.jpg",
       "local:/images/wrap-printed-chiffon-ivory.jpg",
@@ -70,12 +70,14 @@ export const CATALOG_PLAN = [
       "local:/images/wrap-silk-stole-blush.jpg",
       "local:/images/wrap-embellished-ochre.jpg",
       "local:/images/wrap-printed-silk-slate.jpg",
+      "20777203/pexels-photo-20777203",
+      "36823461/pexels-photo-36823461",
     ],
     tones: ["Gold Trellis", "Ivory Bloom", "Dusty Rose", "Sage Weave", "Midnight Vine", "Blush Fern", "Ochre Trail", "Slate Mist", "Amber Reed", "Powder Blue"],
     priceRange: [1990, 6990],
   },
   {
-    cat: "footwear", label: "Footwear", count: 5,
+    cat: "footwear", label: "Footwear", count: 9,
     styles: ["Beige Block Heels", "Strappy Sandals", "Glitter Closed-Toe Heels", "Flat-Soled Shoe", "Strappy Walking Heels", "Embellished Pair Heels", "White Peep-Toe Sandals", "Boutique Black Sandals", "Blue Studded Heels"],
     styleImages: [
       "local:/images/shoe-block-heels-beige.jpg",
@@ -92,7 +94,7 @@ export const CATALOG_PLAN = [
     priceRange: [2490, 8990],
   },
   {
-    cat: "bags", label: "Bags", count: 5,
+    cat: "bags", label: "Bags", count: 11,
     styles: ["Canvas Tote Bag", "Leather Shoulder Bag", "Structured Handbag", "Colourblock Handbag", "Everyday Tote", "Quilted Tote Bag", "Minimalist Tote", "Studio Tote Bag", "Turquoise Leather Handbag", "Bamboo-Handle Leather Bag", "Chic Crossbody Bag"],
     styleImages: [
       "local:/images/bag-canvas-tote-natural.jpg",
