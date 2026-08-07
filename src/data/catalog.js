@@ -46,7 +46,7 @@ export const CATALOG_PLAN = [
     cat: "men", label: "Men", count: 5,
     styles: ["Navy Blazer Suit", "Kurta Shalwar", "Formal Waistcoat Suit", "Solid Kurta", "Formal Shirt Kameez", "Yellow Festive Kurta", "Thobe Set", "Casual Sunglasses Kurta"],
     styleImages: [
-      "local:/images/men-navy-suit-custom.jpg",
+      ""local:/images/men-navy-suit-2.jpg",",
       "35542192/pexels-photo-35542192",
       "13222257/pexels-photo-13222257",
       "28113665/pexels-photo-28113665",
