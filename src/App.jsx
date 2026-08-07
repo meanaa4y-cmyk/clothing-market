@@ -1,33 +1,28 @@
-import { lazy, Suspense, useLayoutEffect } from 'react';
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 
-import SpinnerComponent from './components/spinner/spinner.component.jsx';
+import StorePage from "./pages/StorePage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Admin from "./pages/Admin";
 
-const Navigation = lazy(() => import('./routes/navigation/navigation.component'));
-const Home = lazy(() => import('./routes/home/home.component'));
-const Shop = lazy(() => import('./routes/shop/shop.component'));
-const CartComponent = lazy(() => import('./routes/cart/cart.component'));
-const Admin = lazy(() => import('./routes/admin/admin.component'));
-
-const App = () => {
-  const location = useLocation();
-
-  useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [location.pathname]);
-
+export default function App() {
   return (
-    <Suspense fallback={<SpinnerComponent />}>
+    <AuthProvider>
       <Routes>
-        <Route path='/' element={<Navigation />}>
-          <Route index element={<Home />} />
-          <Route path='shop/*' element={<Shop />} />
-          <Route path='cart' element={<CartComponent />} />
-          <Route path='admin' element={<Admin />} />
-        </Route>
+        <Route path="/" element={<StorePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedAdminRoute>
+              <Admin />
+            </ProtectedAdminRoute>
+          }
+        />
       </Routes>
-    </Suspense>
-  )
+    </AuthProvider>
+  );
 }
-
-export default App

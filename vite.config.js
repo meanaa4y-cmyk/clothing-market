@@ -1,21 +1,7 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/',
-  server: {
-    host: true,
-    port: 5173,
-    allowedHosts: ['.monkeycode-ai.live']
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/setupTests.js',
-    coverage: {
-      provider: 'v8'
-    }
-  }
 })
